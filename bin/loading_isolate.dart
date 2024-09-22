@@ -10,6 +10,7 @@ Future<void> loadDataFromIsolate() async {
   List<Map<String, dynamic>> result = [];
   final receivePort = ReceivePort();
   final isolate = await Isolate.spawn(fetchDataIsolate, receivePort.sendPort);
+  print(isolate.debugName);
   await for (var response in receivePort) {
     if (response == null) {
       break; // Exit the loop on completion signal
@@ -29,7 +30,7 @@ void fetchDataIsolate(SendPort sendPort) async {
 }
 
 Future<Map<String, dynamic>> fetchData({int requestCount = 1}) async {
-  final url = Uri.parse('https://api.example.com/data');
+  final url = Uri.parse('http://headers.jsontest.com/');
   List<Future<http.Response>> futures = [];
   for (int j = 0; j < requestCount; j++) {
     futures.add(http.get(url));

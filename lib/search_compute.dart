@@ -1,6 +1,8 @@
 import 'dart:math';
+import 'package:compute/compute.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 List<Map<String, dynamic>> list = []; // computedData
 List<Map<String, dynamic>> filteredList = [];
@@ -8,19 +10,23 @@ TextEditingController inputController = TextEditingController();
 bool searching = false;
 
 void main() async {
-  inputController.addListener(searchFromMainThread);
+  inputController.addListener(searchFromCompute);
   await emulateTextInput();
-  inputController.removeListener(searchFromMainThread);
+  inputController.removeListener(searchFromCompute);
 }
 
-void searchFromMainThread() {
+Future<void> searchFromCompute() async {
   searching = true;
   final input = inputController.text;
   if (input.isNotEmpty && list.isNotEmpty) {
-    filteredList.clear();
-    filteredList.addAll(list.where((Map<String, dynamic> map) {
-      return map.values.where((e) => e.value.contains(input)).isNotEmpty;
-    }).toList());
+    await compute(
+        () {
+          filteredList.clear();
+          filteredList.addAll(list.where((Map<String, dynamic> map) {
+            return map.values.where((e) => e.value.contains(input)).isNotEmpty;
+          }).toList());
+        } as ComputeCallback<void, dynamic>,
+        null);
   }
   searching = false;
 }
@@ -30,7 +36,11 @@ Future<void> emulateTextInput() async {
   for (int i = 0; i < list.length; i++) {
     words.addAll(list[i].values.map((e) => e.value as String).toSet().toList());
   }
-  words = words.map((String word) => word.substring(0, min(word.length, 3))).toSet().take(3).toList();
+  words = words
+      .map((String word) => word.substring(0, min(word.length, 3)))
+      .toSet()
+      .take(3)
+      .toList();
 
   for (var word in words) {
     final List<String> letters = word.split('');

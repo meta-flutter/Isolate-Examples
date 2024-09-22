@@ -14,17 +14,20 @@ Future<void> loadDataFromCompute() async {
   }
 
   // alternative way
-  result = await compute((int count) async {
-    List<Map<String, dynamic>> list = [];
-    for (int i = 0; i < 10; i++) {
-      list.add(await fetchData(count));
-    }
-    return list;
-  }, 5,);
+  result = await compute(
+    (int count) async {
+      List<Map<String, dynamic>> list = [];
+      for (int i = 0; i < 10; i++) {
+        list.add(await fetchData(count));
+      }
+      return list;
+    },
+    5,
+  );
 }
 
 Future<Map<String, dynamic>> fetchData(int requestCount) async {
-  final url = Uri.parse('https://api.example.com/data');
+  final url = Uri.parse('http://headers.jsontest.com/');
   List<Future<http.Response>> futures = [];
   for (int j = 0; j < requestCount; j++) {
     futures.add(http.get(url));

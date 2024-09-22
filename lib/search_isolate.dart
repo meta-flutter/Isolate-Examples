@@ -2,6 +2,7 @@ import 'dart:isolate';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 List<Map<String, dynamic>> list = []; // computedData
 List<Map<String, dynamic>> filteredList = [];
@@ -18,6 +19,7 @@ Future<void> searchFromIsolate() async {
   searching = true;
   final ReceivePort receivePort = ReceivePort();
   final isolate = await Isolate.spawn(filterDataIsolate, receivePort.sendPort);
+  print(isolate.debugName);
   await for (var response in receivePort) {
     if (response == null) {
       break;
@@ -43,7 +45,11 @@ Future<void> emulateTextInput() async {
   for (int i = 0; i < list.length; i++) {
     words.addAll(list[i].values.map((e) => e.value as String).toSet().toList());
   }
-  words = words.map((String word) => word.substring(0, min(word.length, 3))).toSet().take(3).toList();
+  words = words
+      .map((String word) => word.substring(0, min(word.length, 3)))
+      .toSet()
+      .take(3)
+      .toList();
 
   for (var word in words) {
     final List<String> letters = word.split('');

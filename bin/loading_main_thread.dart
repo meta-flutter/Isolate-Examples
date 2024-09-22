@@ -13,7 +13,7 @@ Future<void> loadDataFromMainThread() async {
 }
 
 Future<Map<String, dynamic>> fetchData({int requestCount = 1}) async {
-  final url = Uri.parse('https://api.example.com/data');
+  final url = Uri.parse('http://headers.jsontest.com/');
   List<Future<http.Response>> futures = [];
   for (int j = 0; j < requestCount; j++) {
     futures.add(http.get(url));
